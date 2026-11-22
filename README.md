@@ -90,7 +90,10 @@ BASE_RPC=http://127.0.0.1:8899 ER_RPC=http://127.0.0.1:7799 \
   faucet is closed (HTTP 410, it now points to https://faucet.solana.com), so the
   wallet `hbpWkugUv6baXjcz7ycayAG5P2r1hw2RBggHD4gU3c7` needs one visit to the web
   faucet, after which `anchor deploy --provider.cluster devnet && cd app && npm run demo`
-  runs the whole lifecycle live.
+  runs the whole lifecycle live. (A fully local run was also attempted: in this
+  sandbox the Agave 3.x test validator aborts on an `io_uring` assertion and the
+  local ER validator won't stay up against an Agave 2.3 base chain — on a normal
+  dev machine the local flow below works as written.)
 
 ## Repo layout
 
