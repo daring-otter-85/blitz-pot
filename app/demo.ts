@@ -151,10 +151,21 @@ async function main() {
       .methods.startGame()
       .accounts({ host: host.publicKey })
       .instruction();
-    const delegateIx = await programFor(host)
+    const delegateBuilder = programFor(host)
       .methods.delegate()
-      .accounts({ payer: host.publicKey, host: host.publicKey, pda: gamePda })
-      .instruction();
+      .accounts({ payer: host.publicKey, host: host.publicKey, pda: gamePda });
+    // When running against a *local* Ephemeral Rollup, pin the local
+    // validator (same trick as the official MagicBlock counter example).
+    if (process.env.DELEGATE_VALIDATOR) {
+      delegateBuilder.remainingAccounts([
+        {
+          pubkey: new PublicKey(process.env.DELEGATE_VALIDATOR),
+          isSigner: false,
+          isWritable: false,
+        },
+      ]);
+    }
+    const delegateIx = await delegateBuilder.instruction();
     const tx = new Transaction().add(startIx, delegateIx);
     const sig = await baseProvider.sendAndConfirm(tx, []);
     console.log(`3) started + delegated: https://explorer.solana.com/tx/${sig}?cluster=devnet`);

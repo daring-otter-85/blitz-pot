@@ -60,6 +60,26 @@ The demo creates a game, joins 3 players, delegates to the ER
 and prints the measured per-roll latency, then undelegates and settles —
 printing the winner and the pot payout with explorer links for every step.
 
+### Fully local run (no devnet SOL needed)
+
+```bash
+# Base layer: local test validator with the delegation program cloned
+# from devnet and BlitzPot loaded at genesis
+solana-test-validator --url https://api.devnet.solana.com \
+  --clone-upgradeable-program DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh \
+  --bpf-program HGH5JQ877TK25G1bcvKHVa5oTFPkUgG7D2TjwyG8pLkQ target/deploy/blitz_pot.so
+
+# Ephemeral Rollup: local ephemeral validator synced to the local base layer
+ephemeral-validator --remotes localhost --listen 127.0.0.1:7799
+
+# Demo against both local endpoints, pinning the local ER validator
+# (mAGicPQY… is the local ephemeral validator identity, as in the
+# official MagicBlock examples)
+cd app
+BASE_RPC=http://127.0.0.1:8899 ER_RPC=http://127.0.0.1:7799 \
+  DELEGATE_VALIDATOR=mAGicPQYBMvcYveUZA5F5UNNwyHvfYh5xkLS2Fr1mev npm run demo
+```
+
 ## Deployed (devnet)
 
 - Program ID: `HGH5JQ877TK25G1bcvKHVa5oTFPkUgG7D2TjwyG8pLkQ`
